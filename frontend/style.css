@@ -1,0 +1,119 @@
+body {
+  font-family: 'Cairo', sans-serif;
+  background: #f5f8fa;
+  direction: rtl;
+  margin: 0;
+  padding: 0;
+}
+h1, h2 {
+  text-align: center;
+  color: #0a4f70;
+}
+form {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  margin: auto;
+  gap: 10px;
+}
+input, textarea, select, button {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+}
+button {
+  background-color: #0a4f70;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+button:hover {
+  background-color: #0973a3;
+}
+.login-box, .doctor-card, .absence-box {
+  background: white;
+  padding: 20px;
+  margin: 40px auto;
+  width: 80%;
+  max-width: 400px;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+img {
+  width: 100%;
+  border-radius: 12px;
+}
+nav {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+nav a {
+  background: #0a4f70;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: background 0.3s ease;
+}
+nav a:hover {
+  background: #0973a3;
+}
+
+.doctors-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  padding: 40px;
+}
+
+body.portfolio {
+  font-family: 'Cairo', sans-serif;
+  background-color: #f0f4f8;
+  padding: 40px;
+  text-align: center;
+}
+
+.doctor-card {
+  background-color: #fff;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  max-width: 400px;
+  margin: auto;
+  transition: transform 0.3s;
+}
+
+.doctor-card:hover {
+  transform: translateY(-5px);
+}
+
+.doctor-card img {
+  width: 250px;
+  height: 250px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-bottom: 20px;
+  border: 4px solid #4CAF50;
+}
+
+.doctor-card h2 {
+  font-size: 24px;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.doctor-card p {
+  margin: 5px 0;
+  font-size: 19px;
+  color: #666;
+}
+
+.doctor-card .bio {
+  margin-top: 15px;
+  color: #444;
+  line-height: 1.6;
+}

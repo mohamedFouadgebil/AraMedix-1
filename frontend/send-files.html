@@ -1,0 +1,294 @@
+<!-- <!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Dateien senden – AraMedix</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="./image/Logo3.jpeg">
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      margin: 0;
+      background-color: #f8fafc;
+      color: #0a4f70;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: #0a4f70;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    form {
+      background-color: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      max-width: 500px;
+      width: 100%;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      text-align: center;
+      color: #0a4f70;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    input[type="text"],
+    input[type="file"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    button {
+      background-color: #0a4f70;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      width: 100%;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #06384f;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      background-color: #e2e8f0;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <header>Dateien an Ärzte senden</header>
+
+  <main>
+    <form id="fileForm">
+      <h2>Neue Datei hochladen</h2>
+      <label for="title">Titel der Datei</label>
+      <input type="text" id="title" name="title" required>
+
+      <label for="file">Datei auswählen</label>
+      <input type="file" id="file" name="file" required>
+
+      <button type="submit">Senden</button>
+    </form>
+  </main>
+
+  <footer>© 2025 AraMedix – Admin-Bereich</footer>
+
+  <script>
+    document.getElementById("fileForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      const token = localStorage.getItem("token");
+      const formData = new FormData();
+      formData.append("title", document.getElementById("title").value);
+      formData.append("file", document.getElementById("file").files[0]);
+
+      const res = await fetch("http://localhost:5000/api/files/upload", {
+        method: "POST",
+        headers: { Authorization: token },
+        body: formData
+      });
+
+      if (res.ok) {
+        alert("Datei erfolgreich gesendet.");
+        document.getElementById("fileForm").reset();
+      } else {
+        alert("Fehler beim Senden der Datei.");
+      }
+    });
+  </script>
+</body>
+</html>
+ -->
+
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dateien senden – AraMedix</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="icon" href="./image/Logo3.jpeg" />
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      margin: 0;
+      background-color: #f8fafc;
+      color: #0a4f70;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .navbar {
+      background-color: #0a4f70;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+      font-size: 24px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    .navbar img {
+      height: 40px;
+      width: 40px;
+      object-fit: cover;
+    }
+    .back-button {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: #ffffff30;
+      color: white;
+      padding: 6px 14px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 14px;
+      transition: background 0.3s;
+    }
+    .back-button:hover {
+      background-color: #ffffff60;
+    }
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+    form {
+      background-color: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      max-width: 500px;
+      width: 100%;
+    }
+    h2 {
+      margin-bottom: 20px;
+      text-align: center;
+      color: #0a4f70;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #333;
+    }
+    input[type="text"],
+    input[type="file"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    button {
+      background-color: #0a4f70;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      width: 100%;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #06384f;
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      background-color: #e2e8f0;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <img src="./image/Logo1.jpeg" alt="Logo" />
+    Dateien an Ärzte senden
+    <a href="./admin-dashboard.html" class="back-button">← Zurück</a>
+  </div>
+
+  <main>
+    <form id="fileForm">
+      <h2>Neue Datei hochladen</h2>
+      <label for="title">Titel der Datei</label>
+      <input type="text" id="title" name="title" required />
+
+      <label for="file">Datei auswählen</label>
+      <input type="file" id="file" name="file" required />
+
+      <button type="submit">Senden</button>
+    </form>
+  </main>
+
+  <footer>© 2025 AraMedix – Admin-Bereich</footer>
+
+  <script>
+    document.getElementById("fileForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      const token = localStorage.getItem("token");
+      const formData = new FormData();
+      formData.append("title", document.getElementById("title").value);
+      formData.append("file", document.getElementById("file").files[0]);
+
+      const res = await fetch("http://localhost:5000/api/files/upload", {
+        method: "POST",
+        headers: { Authorization: token },
+        body: formData
+      });
+
+      if (res.ok) {
+        alert("Datei erfolgreich gesendet.");
+        this.reset();
+      } else {
+        alert("Fehler beim Senden der Datei.");
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,543 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AraMedix - Staff Attendance Report</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="./image/Logo3.jpeg">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    body {
+      font-family: "Cairo", sans-serif;
+      margin: 0;
+      background-color: #f0f4f8;
+      color: #333;
+    }
+    .navbar {
+      background-color: #0a4f70;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+      font-size: 26px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    .navbar img {
+      height: 40px;
+      width: 40px;
+      object-fit: cover;
+    }
+    .back-button {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: #ffffff30;
+      color: white;
+      padding: 6px 14px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .back-button:hover {
+      background-color: #ffffff60;
+    }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin: 20px auto;
+      padding: 0 10px;
+      max-width: 600px;
+    }
+    .controls button,
+    .controls select {
+      flex: 1 1 45%;
+      padding: 14px 16px;
+      font-size: 16px;
+      border-radius: 10px;
+      border: none;
+      background-color: #0a4f70;
+      color: white;
+      cursor: pointer;
+    }
+    .controls button:hover,
+    .controls select:hover {
+      background-color: #055272;
+    }
+    table {
+      width: 95%;
+      margin: 20px auto 40px;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 10px #ccc;
+    }
+    th, td {
+      padding: 12px 16px;
+      text-align: center;
+      border-bottom: 1px solid #eee;
+    }
+    th {
+      background-color: #0a4f70;
+      color: white;
+    }
+    tr:hover {
+      background-color: #f5f5f5;
+    }
+    h2 {
+      text-align: center;
+      margin-top: 30px;
+      color: #0a4f70;
+    }
+    @media (max-width: 600px) {
+      .controls {
+        flex-direction: column;
+        gap: 10px;
+      }
+      .controls button,
+      .controls select {
+        width: 100%;
+        font-size: 15px;
+        padding: 10px 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    const role = localStorage.getItem("role");
+    if (role !== "admin") location.href = "index.html";
+  </script>
+
+  <div class="navbar">
+    <img src="./image/Logo1.jpeg" alt="Logo">
+    AraMedix - Staff Attendance
+    <a class="back-button" href="admin-dashboard.html">← Back</a>
+  </div>
+
+  <div class="controls">
+    <select id="monthSelect" onchange="manualChange()"></select>
+    <select id="yearSelect" onchange="manualChange()"></select>
+    <button onclick="changeMonth(-1)">← Previous</button>
+    <button onclick="changeMonth(1)">Next →</button>
+    <button onclick="downloadExcel()">⬇ Download Excel</button>
+  </div>
+
+  <h2 id="reportTitle"></h2>
+
+  <table id="reportTable">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Present Staff</th>
+        <th>Absent Staff</th>
+      </tr>
+    </thead>
+    <tbody id="attendanceBody"></tbody>
+  </table>
+
+  <script>
+    const token = localStorage.getItem("token");
+    let selectedYear = new Date().getFullYear();
+    let selectedMonth = new Date().getMonth();
+
+    const monthNames = [...Array(12).keys()].map(i => new Date(0, i).toLocaleString('default', { month: 'long' }));
+    const monthSelect = document.getElementById("monthSelect");
+    const yearSelect = document.getElementById("yearSelect");
+
+    for (let i = 0; i < 12; i++) {
+      const option = document.createElement("option");
+      option.value = i;
+      option.textContent = monthNames[i];
+      monthSelect.appendChild(option);
+    }
+
+    for (let y = 2025; y <= selectedYear + 5; y++) {
+      const option = document.createElement("option");
+      option.value = y;
+      option.textContent = y;
+      yearSelect.appendChild(option);
+    }
+
+    monthSelect.value = selectedMonth;
+    yearSelect.value = selectedYear;
+
+    function changeMonth(diff) {
+      selectedMonth += diff;
+      if (selectedMonth < 0) {
+        selectedMonth = 11;
+        selectedYear--;
+      } else if (selectedMonth > 11) {
+        selectedMonth = 0;
+        selectedYear++;
+      }
+      monthSelect.value = selectedMonth;
+      yearSelect.value = selectedYear;
+      loadAttendance();
+    }
+
+    function manualChange() {
+      selectedMonth = parseInt(monthSelect.value);
+      selectedYear = parseInt(yearSelect.value);
+      loadAttendance();
+    }
+
+    async function loadAttendance() {
+      const reportTitle = document.getElementById("reportTitle");
+      const tbody = document.getElementById("attendanceBody");
+      tbody.innerHTML = "";
+      reportTitle.textContent = `Attendance Report - ${monthNames[selectedMonth]} ${selectedYear}`;
+
+      const usersRes = await fetch("/api/users", {
+        headers: { Authorization: token }
+      });
+      const absencesRes = await fetch("/api/absences", {
+        headers: { Authorization: token }
+      });
+
+      const users = await usersRes.json();
+      const absences = await absencesRes.json();
+
+      const staff = users.filter(u => u.role !== "admin").map(u => u.fullName);
+      const total = staff.length;
+      const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate();
+
+      for (let d = 1; d <= daysInMonth; d++) {
+        const dateObj = new Date(selectedYear, selectedMonth, d);
+        const date = dateObj.toISOString().split("T")[0];
+        const absentSet = new Set();
+
+        absences.forEach(entry => {
+          if (!entry.dates || !Array.isArray(entry.dates)) return;
+          entry.dates.forEach(dateStr => {
+            const formattedDate = new Date(dateStr).toISOString().split("T")[0];
+            if (formattedDate === date && new Date(formattedDate).getMonth() === selectedMonth) {
+              absentSet.add(entry.doctorName);
+            }
+          });
+        });
+
+        const absentCount = absentSet.size;
+        const presentCount = total - absentCount;
+
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td data-type="text">${date}</td>
+          <td>${presentCount}</td>
+          <td>${absentCount}</td>
+        `;
+        tbody.appendChild(row);
+      }
+    }
+
+    function downloadExcel() {
+      const table = document.getElementById("reportTable");
+      const safeMonth = monthNames[selectedMonth].replace(/[^\w]/g, '');
+      const filename = `Attendance_${safeMonth}_${selectedYear}.xlsx`;
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.table_to_sheet(table);
+
+      Object.keys(ws).forEach(cell => {
+        if (cell.startsWith('A') && cell !== 'A1') {
+          const val = ws[cell].v;
+          if (typeof val === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(val)) {
+            ws[cell].t = 's';
+          }
+        }
+      });
+
+      XLSX.utils.book_append_sheet(wb, ws, "Attendance");
+      XLSX.writeFile(wb, filename);
+    }
+
+    loadAttendance();
+  </script>
+</body>
+</html>
+ -->
+
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>AraMedix - Mitarbeiter Anwesenheitsbericht</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="./image/Logo3.jpeg">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    body {
+      font-family: "Cairo", sans-serif;
+      margin: 0;
+      background-color: #f0f4f8;
+      color: #333;
+    }
+    .navbar {
+      background-color: #0a4f70;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+      font-size: 26px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    .navbar img {
+      height: 40px;
+      width: 40px;
+      object-fit: cover;
+    }
+    .back-button {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: #ffffff30;
+      color: white;
+      padding: 6px 14px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .back-button:hover {
+      background-color: #ffffff60;
+    }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin: 20px auto;
+      padding: 0 10px;
+      max-width: 600px;
+    }
+    .controls button,
+    .controls select {
+      flex: 1 1 45%;
+      padding: 14px 16px;
+      font-size: 16px;
+      border-radius: 10px;
+      border: none;
+      background-color: #0a4f70;
+      color: white;
+      cursor: pointer;
+    }
+    .controls button:hover,
+    .controls select:hover {
+      background-color: #055272;
+    }
+    table {
+      width: 95%;
+      margin: 20px auto 40px;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 10px #ccc;
+    }
+    th, td {
+      padding: 12px 16px;
+      text-align: center;
+      border-bottom: 1px solid #eee;
+    }
+    th {
+      background-color: #0a4f70;
+      color: white;
+    }
+    tr:hover {
+      background-color: #f5f5f5;
+    }
+    h2 {
+      text-align: center;
+      margin-top: 30px;
+      color: #0a4f70;
+    }
+    @media (max-width: 600px) {
+      .controls {
+        flex-direction: column;
+        gap: 10px;
+      }
+      .controls button,
+      .controls select {
+        width: 100%;
+        font-size: 15px;
+        padding: 10px 14px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .navbar {
+        font-size: 18px;
+        padding: 12px;
+      }
+
+      .navbar img {
+        height: 28px;
+        width: 28px;
+      }
+
+      .back-button {
+        font-size: 12px;
+        padding: 5px 10px;
+        right: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    const role = localStorage.getItem("role");
+    if (role !== "admin") location.href = "index.html";
+  </script>
+
+  <div class="navbar">
+    <img src="./image/Logo1.jpeg" alt="Logo">
+    AraMedix - Mitarbeiter Anwesenheit
+    <a class="back-button" href="admin-dashboard.html">← Zurück</a>
+  </div>
+
+  <div class="controls">
+    <select id="monthSelect" onchange="manualChange()"></select>
+    <select id="yearSelect" onchange="manualChange()"></select>
+    <button onclick="changeMonth(-1)">← Zurück</button>
+    <button onclick="changeMonth(1)">Weiter →</button>
+    <button onclick="downloadExcel()">⬇ Excel herunterladen</button>
+  </div>
+
+  <h2 id="reportTitle"></h2>
+
+  <table id="reportTable">
+    <thead>
+      <tr>
+        <th>Datum</th>
+        <th>Anwesend</th>
+        <th>Abwesend</th>
+      </tr>
+    </thead>
+    <tbody id="attendanceBody"></tbody>
+  </table>
+
+  <script>
+    const token = localStorage.getItem("token");
+    let selectedYear = new Date().getFullYear();
+    let selectedMonth = new Date().getMonth();
+
+    const monthNames = [...Array(12).keys()].map(i => new Date(0, i).toLocaleString('de', { month: 'long' }));
+    const monthSelect = document.getElementById("monthSelect");
+    const yearSelect = document.getElementById("yearSelect");
+
+    for (let i = 0; i < 12; i++) {
+      const option = document.createElement("option");
+      option.value = i;
+      option.textContent = monthNames[i];
+      monthSelect.appendChild(option);
+    }
+
+    for (let y = 2025; y <= selectedYear + 5; y++) {
+      const option = document.createElement("option");
+      option.value = y;
+      option.textContent = y;
+      yearSelect.appendChild(option);
+    }
+
+    monthSelect.value = selectedMonth;
+    yearSelect.value = selectedYear;
+
+    function changeMonth(diff) {
+      selectedMonth += diff;
+      if (selectedMonth < 0) {
+        selectedMonth = 11;
+        selectedYear--;
+      } else if (selectedMonth > 11) {
+        selectedMonth = 0;
+        selectedYear++;
+      }
+      monthSelect.value = selectedMonth;
+      yearSelect.value = selectedYear;
+      loadAttendance();
+    }
+
+    function manualChange() {
+      selectedMonth = parseInt(monthSelect.value);
+      selectedYear = parseInt(yearSelect.value);
+      loadAttendance();
+    }
+
+    async function loadAttendance() {
+      const reportTitle = document.getElementById("reportTitle");
+      const tbody = document.getElementById("attendanceBody");
+      tbody.innerHTML = "";
+      reportTitle.textContent = `Anwesenheitsbericht - ${monthNames[selectedMonth]} ${selectedYear}`;
+
+      const usersRes = await fetch("http://localhost:5000/api/users", { headers: { Authorization: token } });
+      const absencesRes = await fetch("http://localhost:5000/api/absences", { headers: { Authorization: token } });
+
+      const users = await usersRes.json();
+      const absences = await absencesRes.json();
+
+      const staff = users.filter(u => u.role !== "admin").map(u => u.fullName);
+      const total = staff.length;
+      const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate();
+
+      for (let d = 1; d <= daysInMonth; d++) {
+        const dateObj = new Date(selectedYear, selectedMonth, d);
+        const date = dateObj.toISOString().split("T")[0];
+        const absentSet = new Set();
+
+        absences.forEach(entry => {
+          if (!entry.dates || !Array.isArray(entry.dates)) return;
+          entry.dates.forEach(dateStr => {
+            const formattedDate = new Date(dateStr).toISOString().split("T")[0];
+            if (formattedDate === date && new Date(formattedDate).getMonth() === selectedMonth) {
+              absentSet.add(entry.doctorName);
+            }
+          });
+        });
+
+        const absentCount = absentSet.size;
+        const presentCount = total - absentCount;
+
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td data-type="text">${date}</td>
+          <td>${presentCount}</td>
+          <td>${absentCount}</td>
+        `;
+        tbody.appendChild(row);
+      }
+    }
+
+    function downloadExcel() {
+      const table = document.getElementById("reportTable");
+      const safeMonth = monthNames[selectedMonth].replace(/[^\w]/g, '');
+      const filename = `Anwesenheit_${safeMonth}_${selectedYear}.xlsx`;
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.table_to_sheet(table);
+
+      Object.keys(ws).forEach(cell => {
+        if (cell.startsWith('A') && cell !== 'A1') {
+          const val = ws[cell].v;
+          if (typeof val === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(val)) {
+            ws[cell].t = 's';
+          }
+        }
+      });
+
+      XLSX.utils.book_append_sheet(wb, ws, "Anwesenheit");
+      XLSX.writeFile(wb, filename);
+    }
+
+    loadAttendance();
+  </script>
+</body>
+</html>

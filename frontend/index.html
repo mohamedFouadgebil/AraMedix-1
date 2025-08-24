@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <title>AraMedix - Einloggen</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="icon" href="./image/Logo3.jpeg">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Cairo', sans-serif;
+      background: linear-gradient(135deg, #e0f7fa, #ffffff);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .navbar {
+      background-color: #0a4f70;
+      padding: 15px 20px;
+      color: white;
+      font-size: 24px;
+      font-weight: bold;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .navbar .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px; 
+      font-weight: 700;
+      font-size: 28px;
+      color: white;
+    }
+    .navbar .logo img {
+      height: 40px;
+      object-fit: contain;
+      display: block; 
+    }
+
+    .login-page {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .login-box {
+      background-color: white;
+      padding: 30px 25px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .login-box h2 {
+      margin-bottom: 20px;
+      color: #0a4f70;
+    }
+
+    .login-box form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .login-box input {
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      transition: border 0.3s;
+    }
+
+    .login-box input:focus {
+      outline: none;
+      border-color: #0a4f70;
+    }
+
+    .login-box button {
+      padding: 12px;
+      background-color: #0a4f70;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s;
+    }
+
+    .login-box button:hover {
+      background-color: #06384f;
+      transform: scale(1.02);
+    }
+
+    .login-box p {
+      font-size: 14px;
+      margin-top: 10px;
+    }
+
+    .login-box a {
+      color: #0a4f70;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .login-box a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 480px) {
+      .login-box {
+        padding: 25px 15px;
+      }
+
+      .navbar {
+        font-size: 20px;
+        padding: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <div class="logo">
+      <img src="./image/Logo1.jpeg" alt="AraMedix Logo" /> AraMedix
+    </div>
+  </div>
+
+  <div class="login-page">
+    <div class="login-box">
+      <h2>Einloggen</h2>
+      <form id="loginForm">
+        <input type="email" id="email" placeholder="E-Mail" required />
+        <input type="password" id="password" placeholder="Passwort" required />
+        <button type="submit">Absenden</button>
+      </form>
+
+      <p>
+        Noch kein Konto?
+        <a href="signup.html">Konto erstellen</a>
+      </p>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      try {
+        const response = await fetch("http://localhost:5000/api/auth/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          localStorage.setItem("token", "Bearer " + data.token);
+          localStorage.setItem("role", data.user.role);
+          localStorage.setItem("fullName", data.user.fullName);
+
+          alert("Sie haben sich erfolgreich angemeldet.");
+
+          if (data.user.role === "admin") {
+            window.location.href = "admin-dashboard.html";
+          } else if (data.user.role === "doctor" || data.user.role === "nurse") {
+            window.location.href = "home.html";
+          } else {
+            alert("Ihre Rolle ist nicht berechtigt, auf das System zuzugreifen.");
+          }
+
+        } else {
+          alert(data.message || "Fehler bei der Anmeldung");
+        }
+      } catch (error) {
+        console.error("Login error:", error);
+        alert("Beim Herstellen der Verbindung zum Server ist ein Fehler aufgetreten.");
+      }
+    });
+  </script>
+</body>
+</html>

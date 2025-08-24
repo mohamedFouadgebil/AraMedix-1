@@ -1,0 +1,591 @@
+<!-- <!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>AraMedix - Abwesenheitsanträge</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap">
+  <link rel="icon" href="./image/Logo3.jpeg">
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    body.absences {
+      font-family: 'Cairo', sans-serif;
+      background: linear-gradient(135deg, #e0f7fa, #ffffff);
+      margin: 0;
+    }
+    .navbar {
+      background-color: #0a4f70;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+      font-size: 26px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    .navbar img {
+      height: 40px;
+      width: 40px;
+      object-fit: cover;
+    }
+    .back-button {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: #ffffff30;
+      color: white;
+      padding: 6px 14px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 14px;
+      transition: background 0.3s;
+    }
+    .back-button:hover {
+      background-color: #ffffff60;
+    }
+    .actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin: 15px 0;
+      flex-wrap: wrap;
+    }
+    .action-btn {
+      background-color: #e53935;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .action-btn:hover {
+      transform: scale(1.05);
+      opacity: 0.9;
+    }
+    .excel-btn {
+      background-color: #43a047;
+    }
+    #absenceList {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .absence-box {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      margin: 15px 0;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      text-align: left;
+      position: relative;
+    }
+    .absence-box:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+    }
+    .absence-box p {
+      margin: 8px 0;
+      font-size: 16px;
+      color: #333;
+    }
+    .absence-box p strong {
+      color: #2c3e50;
+    }
+    .btn-group {
+      margin-top: 15px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .absence-box button {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 14px;
+      cursor: pointer;
+      color: white;
+      transition: background-color 0.3s ease, transform 0.2s;
+    }
+    .approve-btn {
+      background-color: #4caf50;
+    }
+    .reject-btn {
+      background-color: #f44336;
+    }
+    .delete-btn {
+      background-color: #9e9e9e;
+    }
+    .absence-box button:hover {
+      transform: scale(1.05);
+      opacity: 0.9;
+    }
+    @media (max-width: 600px) {
+      .btn-group {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .absence-box button {
+        width: 100%;
+      }
+      .actions {
+        flex-direction: column;
+        gap: 8px;
+      }
+      .action-btn {
+        width: 90%;
+      }
+      .navbar {
+        font-size: 18px;
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body class="absences">
+
+  <script>
+    if (localStorage.getItem("role") !== "admin") {
+      location.href = "index.html";
+    }
+  </script>
+
+  <div class="navbar">
+    <img src="./image/Logo1.jpeg" alt="Logo">
+    AraMedix - Abwesenheitsanträge
+    <a class="back-button" href="admin-dashboard.html">← Zurück</a>
+  </div>
+
+  <div class="actions">
+    <button class="action-btn" onclick="deleteAll()">Alle löschen</button>
+    <button class="action-btn excel-btn" onclick="downloadExcel()">Excel herunterladen</button>
+  </div>
+
+  <div id="absenceList"></div>
+
+  <script>
+    let absenceData = [];
+
+    async function loadAbsences() {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Bitte zuerst einloggen");
+        return location.href = "login.html";
+      }
+
+      const res = await fetch("http://localhost:5000/api/absences", {
+        headers: { "Authorization": token }
+      });
+
+      if (!res.ok) {
+        alert("Fehler beim Laden der Daten.");
+        return location.href = "login.html";
+      }
+
+      const list = await res.json();
+      absenceData = list;
+      const container = document.getElementById("absenceList");
+      container.innerHTML = "";
+
+      list.forEach(a => {
+        const d = document.createElement("div");
+        d.classList.add("absence-box");
+        const formattedDates = a.dates.map(date => new Date(date).toLocaleDateString()).join(" - ");
+        d.innerHTML = `
+          <p><strong>${a.doctorName}</strong> (${a.role}) hat einen Antrag gestellt:</p>
+          <p>Daten: ${formattedDates}</p>
+          <p>Grund: ${a.reason || 'Kein Grund angegeben'}</p>
+          <p>Status: <strong>${a.status}</strong></p>
+          <div class="btn-group">
+            <button class="approve-btn" onclick="update('${a._id}','Genehmigt')">Genehmigen</button>
+            <button class="reject-btn" onclick="update('${a._id}','Abgelehnt')">Ablehnen</button>
+            <button class="delete-btn" onclick="deleteAbsence('${a._id}')">Löschen</button>
+          </div>
+        `;
+        container.appendChild(d);
+      });
+    }
+
+    async function update(id, status) {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`http://localhost:5000/api/absences/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": token
+        },
+        body: JSON.stringify({ status })
+      });
+
+      if (!res.ok) {
+        alert("Fehler beim Aktualisieren.");
+        return location.href = "login.html";
+      }
+
+      loadAbsences();
+    }
+
+    async function deleteAbsence(id) {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`http://localhost:5000/api/absences/${id}`, {
+        method: "DELETE",
+        headers: { "Authorization": token }
+      });
+
+      if (!res.ok) {
+        alert("Fehler beim Löschen.");
+        return;
+      }
+
+      loadAbsences();
+    }
+
+    async function deleteAll() {
+      if (!confirm("Sind Sie sicher, dass Sie alle Anträge löschen möchten?")) return;
+
+      const token = localStorage.getItem("token");
+      const res = await fetch(`http://localhost:5000/api/absences`, {
+        method: "DELETE",
+        headers: { "Authorization": token }
+      });
+
+      if (!res.ok) {
+        alert("Fehler beim Löschen.");
+        return;
+      }
+
+      loadAbsences();
+    }
+
+    function downloadExcel() {
+      if (!absenceData.length) {
+        alert("Keine Daten verfügbar.");
+        return;
+      }
+
+      const rows = absenceData.map((entry, index) => ({
+        Nr: index + 1,
+        Name: entry.doctorName,
+        Rolle: entry.role,
+        Daten: entry.dates.map(d => new Date(d).toLocaleDateString()).join(", "),
+        Grund: entry.reason || "Nicht angegeben",
+        Status: entry.status
+      }));
+
+      const worksheet = XLSX.utils.json_to_sheet(rows);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Abwesenheiten");
+      XLSX.writeFile(workbook, "abwesenheiten.xlsx");
+    }
+
+    loadAbsences();
+  </script>
+</body>
+</html>
+ -->
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>AraMedix - Abwesenheitsanträge</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap">
+  <link rel="icon" href="./image/Logo3.jpeg">
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    body.absences {
+      font-family: 'Cairo', sans-serif;
+      background: linear-gradient(135deg, #e0f7fa, #ffffff);
+      margin: 0;
+    }
+    .navbar {
+      background-color: #0a4f70;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+      font-size: 26px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    .navbar img {
+      height: 40px;
+      width: 40px;
+      object-fit: cover;
+    }
+    .back-button {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: #ffffff30;
+      color: white;
+      padding: 6px 14px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 14px;
+      transition: background 0.3s;
+    }
+    .back-button:hover {
+      background-color: #ffffff60;
+    }
+    .actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin: 15px 0;
+      flex-wrap: wrap;
+    }
+    .action-btn {
+      background-color: #e53935;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .action-btn:hover {
+      transform: scale(1.05);
+      opacity: 0.9;
+    }
+    .excel-btn {
+      background-color: #43a047;
+    }
+    #absenceList {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .absence-box {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      margin: 15px 0;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      text-align: left;
+      position: relative;
+    }
+    .absence-box:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+    }
+    .absence-box p {
+      margin: 8px 0;
+      font-size: 16px;
+      color: #333;
+    }
+    .absence-box p strong {
+      color: #2c3e50;
+    }
+    .btn-group {
+      margin-top: 15px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .absence-box button {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 14px;
+      cursor: pointer;
+      color: white;
+      transition: background-color 0.3s ease, transform 0.2s;
+    }
+    .approve-btn {
+      background-color: #4caf50;
+    }
+    .reject-btn {
+      background-color: #f44336;
+    }
+    .delete-btn {
+      background-color: #9e9e9e;
+    }
+    .absence-box button:hover {
+      transform: scale(1.05);
+      opacity: 0.9;
+    }
+    @media (max-width: 600px) {
+      .btn-group {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .absence-box button {
+        width: 100%;
+      }
+      .actions {
+        flex-direction: column;
+        gap: 8px;
+        align-items: center;
+      }
+      .action-btn {
+        width: 90%;
+      }
+      .navbar {
+        font-size: 18px;
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body class="absences">
+
+  <script>
+    if (localStorage.getItem("role") !== "admin") {
+      location.href = "index.html";
+    }
+  </script>
+
+  <div class="navbar">
+    <img src="./image/Logo1.jpeg" alt="Logo">
+    AraMedix - Abwesenheitsanträge
+    <a class="back-button" href="admin-dashboard.html">← Zurück</a>
+  </div>
+
+  <div class="actions">
+    <button class="action-btn" onclick="deleteAll()">Alle löschen</button>
+    <button class="action-btn excel-btn" onclick="downloadExcel()">Excel herunterladen</button>
+  </div>
+
+  <div id="absenceList"></div>
+
+  <script>
+    let absenceData = [];
+
+    async function loadAbsences() {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Bitte zuerst einloggen");
+        return location.href = "login.html";
+      }
+
+      const res = await fetch("http://localhost:5000/api/absences", {
+        headers: { "Authorization": token }
+      });
+
+      if (!res.ok) {
+        alert("Fehler beim Laden der Daten.");
+        return location.href = "login.html";
+      }
+
+      const list = await res.json();
+      absenceData = list;
+      const container = document.getElementById("absenceList");
+      container.innerHTML = "";
+
+      list.forEach(a => {
+        const d = document.createElement("div");
+        d.classList.add("absence-box");
+        const formattedDates = a.dates.map(date => new Date(date).toLocaleDateString()).join(" - ");
+        d.innerHTML = `
+          <p><strong>${a.doctorName}</strong> (${a.role}) hat einen Antrag gestellt:</p>
+          <p>Daten: ${formattedDates}</p>
+          <p>Grund: ${a.reason || 'Kein Grund angegeben'}</p>
+          <p>Status: <strong>${a.status}</strong></p>
+          <div class="btn-group">
+            <button class="approve-btn" onclick="update('${a._id}','Genehmigt')">Genehmigen</button>
+            <button class="reject-btn" onclick="update('${a._id}','Abgelehnt')">Ablehnen</button>
+            <button class="delete-btn" onclick="deleteAbsence('${a._id}')">Löschen</button>
+          </div>
+        `;
+        container.appendChild(d);
+      });
+    }
+
+    async function update(id, status) {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`http://localhost:5000/api/absences/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": token
+        },
+        body: JSON.stringify({ status })
+      });
+
+      if (!res.ok) {
+        alert("Fehler beim Aktualisieren.");
+        return location.href = "login.html";
+      }
+
+      loadAbsences();
+    }
+
+    async function deleteAbsence(id) {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`http://localhost:5000/api/absences/${id}`, {
+        method: "DELETE",
+        headers: { "Authorization": token }
+      });
+
+      if (!res.ok) {
+        alert("Fehler beim Löschen.");
+        return;
+      }
+
+      loadAbsences();
+    }
+
+    async function deleteAll() {
+      if (!confirm("Sind Sie sicher, dass Sie alle Anträge löschen möchten?")) return;
+
+      const token = localStorage.getItem("token");
+      const res = await fetch(`http://localhost:5000/api/absences`, {
+        method: "DELETE",
+        headers: { "Authorization": token }
+      });
+
+      if (!res.ok) {
+        alert("Fehler beim Löschen.");
+        return;
+      }
+
+      loadAbsences();
+    }
+
+    function downloadExcel() {
+      if (!absenceData.length) {
+        alert("Keine Daten verfügbar.");
+        return;
+      }
+
+      const rows = absenceData.map((entry, index) => ({
+        Nr: index + 1,
+        Name: entry.doctorName,
+        Rolle: entry.role,
+        Daten: entry.dates.map(d => new Date(d).toLocaleDateString()).join(", "),
+        Grund: entry.reason || "Nicht angegeben",
+        Status: entry.status
+      }));
+
+      const worksheet = XLSX.utils.json_to_sheet(rows);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Abwesenheiten");
+      XLSX.writeFile(workbook, "abwesenheiten.xlsx");
+    }
+
+    loadAbsences();
+  </script>
+</body>
+</html>

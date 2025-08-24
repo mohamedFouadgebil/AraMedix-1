@@ -1,0 +1,349 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AraMedix - Ärzte</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="./image/Logo3.jpeg">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Cairo', sans-serif;
+      background-color: #f0faff;
+      color: #0a4f70;
+    }
+
+    .navbar {
+      background-color: #0a4f70;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+      font-size: 26px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .navbar img {
+      height: 40px;
+      width: 40px;
+      object-fit: cover;
+    }
+
+    .back-button {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: #ffffff30;
+      color: white;
+      padding: 6px 14px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 14px;
+      transition: background 0.3s;
+    }
+
+    .back-button:hover {
+      background-color: #ffffff60;
+    }
+
+    .doctors-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      padding: 40px 20px;
+      max-width: 1200px;
+      margin: auto;
+      justify-content: center;
+    }
+
+    .doctor-card {
+      background-color: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      text-align: center;
+      padding: 20px;
+      transition: transform 0.3s ease;
+      max-width: 300px;
+      margin: auto;
+    }
+
+    .doctor-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .doctor-card img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-bottom: 15px;
+    }
+
+    .doctor-card h2 {
+      margin: 10px 0 5px;
+      font-size: 20px;
+    }
+
+    .doctor-card p {
+      margin: 5px 0;
+      font-size: 15px;
+      color: #333;
+    }
+
+    .doctor-card .bio {
+      font-size: 14px;
+      color: #666;
+      margin-top: 10px;
+      text-align: left;
+    }
+
+    @media (max-width: 600px) {
+      .navbar {
+        font-size: 20px;
+        padding: 16px;
+      }
+
+      .back-button {
+        font-size: 13px;
+        padding: 6px 12px;
+      }
+
+      .doctor-card img {
+        height: 180px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <script>
+    if (localStorage.getItem("role") !== "doctor") location.href = "index.html";
+  </script>
+
+  <div class="navbar">
+    <img src="./image/Logo1.jpeg" alt="Logo">
+    AraMedix - Mitarbeiter
+    <a href="doctor-dashboard.html" class="back-button">← Zurück</a>
+  </div>
+
+  <div class="doctors-container" id="doctorsContainer"></div>
+
+  <script>
+    async function loadDoctors() {
+      try {
+        const res = await fetch("http://localhost:5000/api/doctors");
+        const docs = await res.json();
+
+        const container = document.getElementById("doctorsContainer");
+        container.innerHTML = "";
+
+        if (docs.length === 0) {
+          container.innerHTML = "<p style='text-align:center; width: 100%'>Keine Ärzte verfügbar.</p>";
+          return;
+        }
+
+        docs.forEach(doc => {
+          container.innerHTML += `
+            <div class="doctor-card">
+              <img src="http://localhost:5000${doc.image}" alt="doctor">
+              <h2>${doc.name}</h2>
+              <p>${doc.job}</p>
+              <p class="bio">${doc.bio || "No bio available."}</p>
+            </div>
+          `;
+        });
+      } catch (error) {
+        console.error("Error loading doctors:", error);
+      }
+    }
+
+    loadDoctors();
+  </script>
+</body>
+</html>
+ -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AraMedix - Ärzte</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="./image/Logo3.jpeg">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Cairo', sans-serif;
+      background-color: #f0faff;
+      color: #0a4f70;
+    }
+
+    .navbar {
+      background-color: #0a4f70;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+      font-size: 26px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .navbar img {
+      height: 40px;
+      width: 40px;
+      object-fit: cover;
+    }
+
+    .back-button {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: #ffffff30;
+      color: white;
+      padding: 6px 14px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 14px;
+      transition: background 0.3s;
+    }
+
+    .back-button:hover {
+      background-color: #ffffff60;
+    }
+
+    .doctors-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      padding: 40px 20px;
+      max-width: 1200px;
+      margin: auto;
+      justify-content: center;
+    }
+
+    .doctor-card {
+      background-color: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      text-align: center;
+      padding: 20px;
+      transition: transform 0.3s ease;
+      max-width: 300px;
+      margin: auto;
+    }
+
+    .doctor-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .doctor-card img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-bottom: 15px;
+    }
+
+    .doctor-card h2 {
+      margin: 10px 0 5px;
+      font-size: 20px;
+    }
+
+    .doctor-card p {
+      margin: 5px 0;
+      font-size: 15px;
+      color: #333;
+    }
+
+    .doctor-card .bio {
+      font-size: 14px;
+      color: #666;
+      margin-top: 10px;
+      text-align: left;
+      word-wrap: break-word;     
+      overflow-wrap: break-word; 
+    }
+
+
+    @media (max-width: 600px) {
+      .navbar {
+        font-size: 20px;
+        padding: 16px;
+      }
+
+      .back-button {
+        font-size: 13px;
+        padding: 6px 12px;
+      }
+
+      .doctor-card img {
+        height: 180px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <script>
+    if (localStorage.getItem("role") !== "doctor") location.href = "index.html";
+  </script>
+
+  <div class="navbar">
+    <img src="./image/Logo1.jpeg" alt="Logo">
+    AraMedix - Mitarbeiter
+    <a href="doctor-dashboard.html" class="back-button">← Zurück</a>
+  </div>
+
+  <div class="doctors-container" id="doctorsContainer"></div>
+
+  <script>
+    async function loadDoctors() {
+      try {
+        const res = await fetch("http://localhost:5000/api/doctors");
+        const docs = await res.json();
+
+        const container = document.getElementById("doctorsContainer");
+        container.innerHTML = "";
+
+        if (docs.length === 0) {
+          container.innerHTML = "<p style='text-align:center; width: 100%'>Keine Ärzte verfügbar.</p>";
+          return;
+        }
+
+        docs.forEach(doc => {
+          container.innerHTML += `
+            <div class="doctor-card">
+              <img src="http://localhost:5000${doc.image}" alt="doctor">
+              <h2>${doc.name}</h2>
+              <p>${doc.job}</p>
+              <p class="bio">${doc.bio || "No bio available."}</p>
+            </div>
+          `;
+        });
+      } catch (error) {
+        console.error("Fehler beim Laden der Ärzte:", error);
+      }
+    }
+
+    loadDoctors();
+  </script>
+</body>
+</html>

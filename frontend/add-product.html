@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AraMedix - Add a Product</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="icon" href="./image/Logo3.jpeg">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Cairo', sans-serif;
+      background-color: #f0f4f8;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .header {
+      background-color: #0a4f70;
+      color: white;
+      padding: 16px 20px;
+      text-align: center;
+      position: relative;
+    }
+
+    .header h2 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .back-button {
+      position: absolute;
+      right: 16px; 
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: #ffffff30;
+      color: white;
+      padding: 6px 14px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .back-button:hover {
+      background-color: #ffffff60;
+    }
+
+    .container {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 40px 20px;
+    }
+
+    .form-box {
+      background: white;
+      padding: 30px 25px;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+      max-width: 500px;
+      width: 100%;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    input, textarea {
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      transition: border-color 0.3s ease;
+    }
+
+    input:focus, textarea:focus {
+      border-color: #0a4f70;
+      outline: none;
+    }
+
+    button {
+      background-color: #0a4f70;
+      color: white;
+      border: none;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #0a4f70;
+    }
+
+    @media (max-width: 600px) {
+      .form-box {
+        padding: 20px 15px;
+      }
+
+      input, textarea {
+        font-size: 14px;
+      }
+
+      button {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body class="add-product">
+
+  <script>
+    const role = localStorage.getItem("role");
+    const token = localStorage.getItem("token");
+
+    if (role !== "admin" || !token) {
+      alert("Sie sind nicht zum Betreten berechtigt.");
+      location.href = "index.html";
+    }
+  </script>
+
+  <div class="header">
+    <h2>Add a New Product</h2>
+    <a class="back-button" href="admin-dashboard.html">← Zurück</a>
+  </div>
+
+  <div class="container">
+    <div class="form-box">
+      <form id="addProductForm">
+        <input type="text" id="name" placeholder="Product Name" required />
+        <input type="number" id="price" placeholder="Price" required />
+        <textarea id="description" rows="3" placeholder="Product Description" required></textarea>
+        <input type="file" id="image" accept="image/*" required />
+        <button type="submit">Add Product</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("addProductForm").addEventListener("submit", async e => {
+      e.preventDefault();
+
+      const fd = new FormData();
+      fd.append("name", document.getElementById("name").value);
+      fd.append("price", document.getElementById("price").value);
+      fd.append("description", document.getElementById("description").value);
+      fd.append("image", document.getElementById("image").files[0]);
+
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        alert("Token fehlt. Bitte melden Sie sich erneut an.");
+        return;
+      }
+
+      try {
+        const res = await fetch("http://localhost:5000/api/products", {
+          method: "POST",
+          headers: {
+            Authorization: token
+          },
+          body: fd
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          alert("✅ Produkt erfolgreich hinzugefügt!");
+          document.getElementById("addProductForm").reset();
+        } else {
+          alert(data.message || "❌ Produkt konnte nicht hinzugefügt werden.");
+        }
+      } catch (err) {
+        console.error("❌ Error:", err);
+        alert("Netzwerk- oder Serverfehler.");
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,661 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AraMedix - Admin-Bereich</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="./image/Logo3.jpeg">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Cairo', sans-serif;
+      background-color: #f1f5f9;
+      color: #333;
+      direction: ltr;
+    }
+
+    .dashboard-header {
+      background-color: #0a4f70;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+    }
+
+    .dashboard-header h1 {
+      margin: 0;
+      font-size: 26px;
+    }
+
+    .back-button {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: #ffffff30;
+      color: white;
+      padding: 6px 14px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 14px;
+      transition: background 0.3s;
+    }
+
+    .back-button:hover {
+      background-color: #ffffff60;
+    }
+
+    .dashboard-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+      padding: 40px 20px;
+    }
+
+    .card {
+      background-color: white;
+      padding: 25px;
+      width: 260px;
+      border-radius: 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      text-align: center;
+      transition: transform 0.3s, box-shadow 0.3s;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    }
+
+    .card h3 {
+      margin-bottom: 10px;
+      color: #0a4f70;
+    }
+
+    .card p {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 15px;
+    }
+
+    .card a.btn-link {
+      display: inline-block;
+      background-color: #0a4f70;
+      color: white;
+      padding: 10px 18px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      margin-top: auto;
+    }
+
+    .card a.btn-link:hover {
+      background-color: #06384f;
+      transform: scale(1.05);
+    }
+
+    .btn-disabled {
+      background-color: #ccc !important;
+      color: #888 !important;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      background-color: #e2e8f0;
+      margin-top: 40px;
+      font-size: 14px;
+    }
+
+    @media (max-width: 600px) {
+      .card {
+        width: 90%;
+      }
+
+      .dashboard-header h1 {
+        font-size: 22px;
+      }
+
+      .card h3 {
+        font-size: 18px;
+      }
+
+      .card p {
+        font-size: 13px;
+      }
+
+      .card a.btn-link {
+        width: 100%;
+        text-align: center;
+        padding: 12px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    const role = localStorage.getItem("role");
+    const userName = localStorage.getItem("fullName");
+    if (role !== "admin") location.href = "index.html";
+  </script>
+
+  <div class="dashboard-header">
+    <h1 id="welcomeText">Willkommen</h1>
+    <a class="back-button" href="index.html">← Zurück</a>
+  </div>
+
+  <div class="dashboard-container">
+    <div class="card">
+      <h3>Einen Arzt hinzufügen</h3>
+      <p>Füge dem System einen neuen Arzt mit Name, Position und Bild hinzu.</p>
+      <a class="btn-link" href="add-doctor.html">Arzt hinzufügen</a>
+    </div> -->
+<!--     <div class="card">
+      <h3>Produkt hinzufügen</h3>
+      <p>Dieser Bereich ist derzeit nicht zugänglich.</p>
+      <a class="btn-link btn-disabled" href="#">Derzeit nicht verfügbar</a>
+    </div> -->
+<!--     <div class="card">
+      <h3>Abwesenheitsanträge</h3>
+      <p>Urlaubsanträge von Ärzten oder Pflegekräften einsehen und annehmen oder ablehnen.</p>
+      <a class="btn-link" href="absences.html">Anträge anzeigen</a>
+    </div>
+    <div class="card">
+      <h3>Abwesenheitskalender</h3>
+      <p>Anzeigen, wer an welchen Tagen im Monatskalender abwesend ist.</p>
+      <a class="btn-link" href="calendar.html">Kalender öffnen</a>
+    </div>
+    <div class="card">
+      <h3>Personalstatus</h3>
+      <p>Gesamtpersonal: <strong id="totalCount">-</strong></p>
+      <p>Heute verfügbar: <strong id="availableCount">-</strong></p>
+      <a class="btn-link" href="staff-status.html">Vollständigen Bericht anzeigen</a>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 Admin-Bereich – AraMedix</p>
+  </footer>
+
+  <script>
+    const welcomeElement = document.getElementById("welcomeText");
+    if (userName) {
+      welcomeElement.textContent = `Willkommen, ${userName}`;
+    }
+  </script>
+  <script>
+    async function loadStaffData() {
+      const token = localStorage.getItem("token");
+      const usersRes = await fetch("http://localhost:5000/api/users", {
+        headers: { Authorization: token },
+      });
+      const absencesRes = await fetch("http://localhost:5000/api/absences", {
+        headers: { Authorization: token },
+      });
+
+      const users = await usersRes.json();
+      const absences = await absencesRes.json();
+
+      const totalStaff = users.filter(user => user.role !== "admin").length;
+      const today = new Date().toISOString().split("T")[0];
+      const absentToday = new Set();
+
+      absences.forEach(entry => {
+        entry.dates.forEach(dateStr => {
+          const date = new Date(dateStr).toISOString().split("T")[0];
+          if (date === today) absentToday.add(entry.doctorName);
+        });
+      });
+
+      const availableToday = totalStaff - absentToday.size;
+
+      document.getElementById("totalCount").textContent = totalStaff;
+      document.getElementById("availableCount").textContent = availableToday;
+    }
+    loadStaffData();
+  </script>
+</body>
+</html> -->
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AraMedix - Admin-Bereich</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="./image/Logo3.jpeg">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Cairo', sans-serif;
+      background-color: #f1f5f9;
+      color: #333;
+      direction: ltr;
+    }
+
+    .dashboard-header {
+      background-color: #0a4f70;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+    }
+
+    .dashboard-header h1 {
+      margin: 0;
+      font-size: 26px;
+    }
+
+    .back-button {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: #ffffff30;
+      color: white;
+      padding: 6px 14px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 14px;
+      transition: background 0.3s;
+    }
+
+    .back-button:hover {
+      background-color: #ffffff60;
+    }
+
+    .dashboard-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+      padding: 40px 20px;
+    }
+
+    .card {
+      background-color: white;
+      padding: 25px;
+      width: 260px;
+      border-radius: 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      text-align: center;
+      transition: transform 0.3s, box-shadow 0.3s;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    }
+
+    .card h3 {
+      margin-bottom: 10px;
+      color: #0a4f70;
+    }
+
+    .card p {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 15px;
+    }
+
+    .card a.btn-link {
+      display: inline-block;
+      background-color: #0a4f70;
+      color: white;
+      padding: 10px 18px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      margin-top: auto;
+    }
+
+    .card a.btn-link:hover {
+      background-color: #06384f;
+      transform: scale(1.05);
+    }
+
+    .btn-disabled {
+      background-color: #ccc !important;
+      color: #888 !important;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      background-color: #e2e8f0;
+      margin-top: 40px;
+      font-size: 14px;
+    }
+
+    @media (max-width: 600px) {
+      .card {
+        width: 90%;
+      }
+
+      .dashboard-header h1 {
+        font-size: 22px;
+      }
+
+      .card h3 {
+        font-size: 18px;
+      }
+
+      .card p {
+        font-size: 13px;
+      }
+
+      .card a.btn-link {
+        width: 100%;
+        text-align: center;
+        padding: 12px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    const role = localStorage.getItem("role");
+    const userName = localStorage.getItem("fullName");
+    if (role !== "admin") location.href = "index.html";
+  </script>
+
+  <div class="dashboard-header">
+    <h1 id="welcomeText">Willkommen</h1>
+    <a class="back-button" href="index.html">← Abmelden</a>
+  </div>
+
+  <div class="dashboard-container">
+    <div class="card">
+      <h3>Einen Arzt hinzufügen</h3>
+      <p>Füge dem System einen neuen Arzt mit Name, Position und Bild hinzu.</p>
+      <a class="btn-link" href="add-doctor.html">Arzt hinzufügen</a>
+    </div>
+    <div class="card">
+      <h3>Abwesenheitsanträge</h3>
+      <p>Urlaubsanträge von Ärzten oder Pflegekräften einsehen und annehmen oder ablehnen.</p>
+      <a class="btn-link" href="absences.html">Anträge anzeigen</a>
+    </div>
+    <div class="card">
+      <h3>Abwesenheitskalender</h3>
+      <p>Anzeigen, wer an welchen Tagen im Monatskalender abwesend ist.</p>
+      <a class="btn-link" href="calendar.html">Kalender öffnen</a>
+    </div>
+    <div class="card">
+      <h3>Personalstatus</h3>
+      <p>Gesamtpersonal: <strong id="totalCount">-</strong></p>
+      <p>Heute verfügbar: <strong id="availableCount">-</strong></p>
+      <a class="btn-link" href="staff-status.html">Vollständigen Bericht anzeigen</a>
+    </div>
+    <div class="card">
+      <h3>Dateien senden</h3>
+      <p>Senden Sie wichtige Dateien oder Dokumente an Ärzte.</p>
+      <a class="btn-link" href="send-files.html">Dateien senden</a>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 Admin-Bereich – AraMedix</p>
+  </footer>
+
+  <script>
+    const welcomeElement = document.getElementById("welcomeText");
+    if (userName) {
+      welcomeElement.textContent = `Willkommen, ${userName}`;
+    }
+  </script>
+  <script>
+    async function loadStaffData() {
+      const token = localStorage.getItem("token");
+      const usersRes = await fetch("http://localhost:5000/api/users", {
+        headers: { Authorization: token },
+      });
+      const absencesRes = await fetch("http://localhost:5000/api/absences", {
+        headers: { Authorization: token },
+      });
+
+      const users = await usersRes.json();
+      const absences = await absencesRes.json();
+
+      const totalStaff = users.filter(user => user.role !== "admin").length;
+      const today = new Date().toISOString().split("T")[0];
+      const absentToday = new Set();
+
+      absences.forEach(entry => {
+        entry.dates.forEach(dateStr => {
+          const date = new Date(dateStr).toISOString().split("T")[0];
+          if (date === today) absentToday.add(entry.doctorName);
+        });
+      });
+
+      const availableToday = totalStaff - absentToday.size;
+
+      document.getElementById("totalCount").textContent = totalStaff;
+      document.getElementById("availableCount").textContent = availableToday;
+    }
+    loadStaffData();
+  </script>
+</body>
+</html>
+ -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AraMedix - Admin-Bereich</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="./image/Logo3.jpeg">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Cairo', sans-serif;
+      background-color: #f1f5f9;
+      color: #333;
+      direction: ltr;
+    }
+    .dashboard-header {
+      background-color: #0a4f70;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+    }
+    .dashboard-header h1 {
+      margin: 0;
+      font-size: 26px;
+    }
+    .back-button {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: #ffffff30;
+      color: white;
+      padding: 6px 14px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 14px;
+      transition: background 0.3s;
+    }
+    .back-button:hover {
+      background-color: #ffffff60;
+    }
+    .dashboard-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+      padding: 40px 20px;
+    }
+    .card {
+      background-color: white;
+      padding: 25px;
+      width: 260px;
+      border-radius: 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      text-align: center;
+      transition: transform 0.3s, box-shadow 0.3s;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    }
+    .card h3 {
+      margin-bottom: 10px;
+      color: #0a4f70;
+    }
+    .card p {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 15px;
+    }
+    .card a.btn-link {
+      display: inline-block;
+      background-color: #0a4f70;
+      color: white;
+      padding: 10px 18px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      margin-top: auto;
+    }
+    .card a.btn-link:hover {
+      background-color: #06384f;
+      transform: scale(1.05);
+    }
+    .btn-disabled {
+      background-color: #ccc !important;
+      color: #888 !important;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      background-color: #e2e8f0;
+      margin-top: 40px;
+      font-size: 14px;
+    }
+    @media (max-width: 600px) {
+      .card {
+        width: 90%;
+      }
+      .dashboard-header h1 {
+        font-size: 22px;
+      }
+      .card h3 {
+        font-size: 18px;
+      }
+      .card p {
+        font-size: 13px;
+      }
+      .card a.btn-link {
+        width: 100%;
+        text-align: center;
+        padding: 12px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    const role = localStorage.getItem("role");
+    const userName = localStorage.getItem("fullName");
+    if (role !== "admin") location.href = "index.html";
+  </script>
+
+  <div class="dashboard-header">
+    <h1 id="welcomeText">Willkommen</h1>
+    <a class="back-button" href="index.html">← Abmelden</a>
+  </div>
+
+  <div class="dashboard-container">
+    <div class="card">
+      <h3>Einen Arzt hinzufügen</h3>
+      <p>Füge dem System einen neuen Arzt mit Name, Position und Bild hinzu.</p>
+      <a class="btn-link" href="add-doctor.html">Arzt hinzufügen</a>
+    </div>
+    <div class="card">
+      <h3>Abwesenheitsanträge</h3>
+      <p>Urlaubsanträge von Ärzten oder Pflegekräften einsehen und annehmen oder ablehnen.</p>
+      <a class="btn-link" href="absences.html">Anträge anzeigen</a>
+    </div>
+    <div class="card">
+      <h3>Abwesenheitskalender</h3>
+      <p>Anzeigen, wer an welchen Tagen im Monatskalender abwesend ist.</p>
+      <a class="btn-link" href="calendar.html">Kalender öffnen</a>
+    </div>
+    <div class="card">
+      <h3>Personalstatus</h3>
+      <p>Gesamtpersonal: <strong id="totalCount">-</strong></p>
+      <p>Heute verfügbar: <strong id="availableCount">-</strong></p>
+      <a class="btn-link" href="staff-status.html">Vollständigen Bericht anzeigen</a>
+    </div>
+    <div class="card">
+      <h3>Dateien senden</h3>
+      <p>Senden Sie wichtige Dateien oder Dokumente an Ärzte.</p>
+      <a class="btn-link" href="send-files.html">Dateien senden</a>
+    </div>
+    <div class="card">
+      <h3>Benutzerkonten verwalten</h3>
+      <p>Alle registrierten E-Mails anzeigen und Konten löschen.</p>
+      <a class="btn-link" href="manage-users.html">Konten verwalten</a>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 Admin-Bereich – AraMedix</p>
+  </footer>
+
+  <script>
+    const welcomeElement = document.getElementById("welcomeText");
+    if (userName) {
+      welcomeElement.textContent = `Willkommen, ${userName}`;
+    }
+  </script>
+  <script>
+    async function loadStaffData() {
+      const token = localStorage.getItem("token");
+      const usersRes = await fetch("http://localhost:5000/api/users", {
+        headers: { Authorization: token },
+      });
+      const absencesRes = await fetch("http://localhost:5000/api/absences", {
+        headers: { Authorization: token },
+      });
+      const users = await usersRes.json();
+      const absences = await absencesRes.json();
+      const totalStaff = users.filter(user => user.role !== "admin").length;
+      const today = new Date().toISOString().split("T")[0];
+      const absentToday = new Set();
+      absences.forEach(entry => {
+        entry.dates.forEach(dateStr => {
+          const date = new Date(dateStr).toISOString().split("T")[0];
+          if (date === today) absentToday.add(entry.doctorName);
+        });
+      });
+      const availableToday = totalStaff - absentToday.size;
+      document.getElementById("totalCount").textContent = totalStaff;
+      document.getElementById("availableCount").textContent = availableToday;
+    }
+    loadStaffData();
+  </script>
+</body>
+</html>

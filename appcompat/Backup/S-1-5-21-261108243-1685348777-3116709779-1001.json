@@ -1,0 +1,13 @@
+{"Install" : [],
+"Update" : [],
+"Uninstall" : [{"programId": "00003f3b101af045d49387dee140cf60c2a30000ffff",
+"files" : [{"aumid": "cc.arduino.IDE2"
+},{"aumid": "cc.arduino.IDE2"
+}]
+},{"programId": "00005d5e782b0da987316a3f578d70b98eb400000904",
+"files" : [{"aumid": "{6D809377-6AF0-444B-8957-A3773F02200E}\\NetLogo 6.4.0\\Behaviorsearch.exe"
+},{"aumid": "{6D809377-6AF0-444B-8957-A3773F02200E}\\NetLogo 6.4.0\\HubNet Client.exe"
+},{"aumid": "{6D809377-6AF0-444B-8957-A3773F02200E}\\NetLogo 6.4.0\\NetLogo 3D.exe"
+},{"aumid": "{6D809377-6AF0-444B-8957-A3773F02200E}\\NetLogo 6.4.0\\NetLogo.exe"
+}]
+}]}

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>AraMedix - Control Panel | Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="./image/Logo3.jpeg">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Cairo', sans-serif;
+      background-color: #f1f5f9;
+      color: #333;
+      direction: rtl;
+    }
+
+    .dashboard-header {
+      background-color: #0a4f70;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .dashboard-header h1 {
+      margin: 0;
+      font-size: 26px;
+    }
+
+    .dashboard-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+      padding: 40px 20px;
+    }
+
+    .card {
+      background-color: white;
+      padding: 25px;
+      width: 240px;
+      border-radius: 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      text-align: center;
+      transition: transform 0.3s;
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+    }
+
+    .card h3 {
+      margin-bottom: 15px;
+      color: #0a4f70;
+    }
+
+    .card a {
+      text-decoration: none;
+      color: #0a4f70;
+      font-weight: bold;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      background-color: #e2e8f0;
+      margin-top: 40px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-header">
+    <h1>Admin Control Panel</h1>
+  </div>
+
+  <div class="dashboard-container">
+    <div class="card">
+      <h3>Doctors' Management</h3>
+      <a href="doctors.html">View and edit doctors' data</a>
+    </div>
+    <div class="card">
+      <h3>Absence requests</h3>
+      <a href="absences.html">View and approve absences</a>
+    </div>
+    <div class="card">
+      <h3>Add products</h3>
+      <a href="products.html">Medical Products Management</a>
+    </div>
+    <div class="card">
+      <h3>Best Doctors</h3>
+      <a href="best-doctors.html">View List</a>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 Admin Control Panel - Care Clinics</p>
+  </footer>
+</body>
+</html>

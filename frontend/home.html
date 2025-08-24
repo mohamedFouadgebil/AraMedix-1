@@ -1,0 +1,546 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AraMedix - Startseite</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+  <link rel="icon" href="./image/Logo3.jpeg">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: 'Cairo', sans-serif;
+      background: #f5f8fa;
+      color: #333;
+    }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 40px;
+      background-color: #0a4f70;
+      color: white;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+    .navbar .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 28px;
+      color: white;
+    }
+    .navbar .logo img {
+      height: 40px;
+      object-fit: contain;
+      display: block;
+    }
+    .navbar ul {
+      list-style: none;
+      display: flex;
+      gap: 25px;
+      margin: 0;
+      padding: 0;
+    }
+    .navbar li a {
+      color: white;
+      font-weight: 700;
+      padding: 6px 10px;
+      border-radius: 6px;
+      transition: 0.3s;
+    }
+    .navbar li a:hover {
+      background-color: rgba(255,255,255,0.2);
+    }
+    .hero {
+      text-align: center;
+      padding: 100px 20px;
+      background: linear-gradient(135deg, #0a4f70, #0fb9b1);
+      color: white;
+      border-radius: 0 0 50px 50px;
+    }
+    .hero h1 {
+      font-size: 3rem;
+      margin: 0;
+    }
+    .hero p {
+      font-size: 1.3rem;
+      margin-top: 10px;
+    }
+    .hero .cta {
+      margin-top: 30px;
+      display: inline-block;
+      background: white;
+      color: #0a4f70;
+      padding: 14px 40px;
+      border-radius: 30px;
+      font-weight: bold;
+      font-size: 1.2rem;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+    }
+    .hero .cta:hover {
+      background-color: #e0f7fa;
+    }
+    .section-title {
+      text-align: center;
+      color: #0a4f70;
+      font-size: 2rem;
+      margin-top: 40px;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+    .features, .services, .faq {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      padding: 40px 20px;
+    }
+    .feature-card, .service-card, .faq-card {
+      background: white;
+      padding: 25px;
+      width: 280px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .feature-card:hover, .service-card:hover, .faq-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+    }
+    .feature-card h3, .service-card h3, .faq-card h3 {
+      color: #0a4f70;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+    .video-section {
+      text-align: center;
+      padding: 50px 20px;
+    }
+    .video-section h2 {
+      color: #0a4f70;
+      margin-bottom: 20px;
+      font-size: 2rem;
+    }
+    .video-section video {
+      width: 100%;
+      max-width: 800px;
+      height: auto;
+      border-radius: 20px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      transition: box-shadow 0.3s ease;
+      cursor: pointer;
+      height: 400px;
+    }
+    .whatsapp-btn {
+      position: fixed;
+      bottom: 25px;
+      left: 25px;
+      background-color: #25D366;
+      color: white;
+      padding: 14px 26px;
+      border-radius: 40px;
+      font-weight: bold;
+      font-size: 16px;
+      box-shadow: 0 0 20px rgba(37, 211, 102, 0.9);
+      text-decoration: none;
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: #eee;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo">
+      <img src="./image/Logo1.jpeg" alt="AraMedix Logo" /> AraMedix
+    </div>
+    <ul id="navLinks">
+      <li><a href="login.html" id="loginLink">Log in</a></li>
+      <li><a href="doctor-dashboard.html" id="dashboardLink" style="display: none;">Arzt-Dashboard</a></li>
+      <li><a href="index.html" id="logoutLink" style="display: none;">← Abmelden</a></li>
+    </ul>
+  </nav>
+
+  <header class="hero">
+    <h1>Willkommen bei AraMedix</h1>
+    <p>Umfassende medizinische Versorgung über Ihr Mobiltelefon, Tablet oder Ihren Computer</p>
+    <a href="./doctor-dashboard.html" class="cta" id="startBtn">Jetzt starten</a>
+  </header>
+
+  <h2 class="section-title">Plattformfunktionen</h2>
+  <section class="features">
+    <div class="feature-card">
+      <h3>Top-Ärzte</h3>
+      <p>Wir bieten eine Auswahl an Top-Ärzten in verschiedenen Fachrichtungen.</p>
+    </div>
+    <div class="feature-card">
+      <h3>Abwesenheitsanträge</h3>
+      <p>Ärzte können ganz einfach Abwesenheit beantragen, und die Tage werden automatisch erfasst.</p>
+    </div>
+    <div class="feature-card">
+      <h3>Berechtigungsbasierte Bereiche</h3>
+      <p>Jeder Benutzer sieht nur das, was seinem Zugriffsniveau entspricht.</p>
+    </div>
+    <div class="feature-card">
+      <h3>Produktverwaltung</h3>
+      <p>Nur Administratoren können medizinische Produkte hinzufügen und verwalten.</p>
+    </div>
+  </section>
+
+  <h2 class="section-title">Unsere Dienstleistungen</h2>
+  <section class="services">
+    <div class="service-card">
+      <h3>Ärztliche Beratung</h3>
+      <p>Vereinbaren Sie Termine mit unserem zertifizierten medizinischen Personal.</p>
+    </div>
+    <div class="service-card">
+      <h3>Labortests</h3>
+      <p>Genaue und schnelle Testergebnisse, direkt mit Ihrem Profil verknüpft.</p>
+    </div>
+    <div class="service-card">
+      <h3>Online-Nachverfolgung</h3>
+      <p>Erhalten Sie Nachsorgekonsultationen aus der Ferne per Videoanruf.</p>
+    </div>
+  </section>
+
+  <h2 class="section-title">Häufige Fragen</h2>
+  <section class="faq">
+    <div class="faq-card">
+      <h3>Muss ich im Voraus buchen?</h3>
+      <p>Ja, die Online-Buchung sorgt für schnellen Service und eine bessere Vorbereitung.</p>
+    </div>
+    <div class="faq-card">
+      <h3>Welche Versicherungen akzeptieren Sie?</h3>
+      <p>Wir akzeptieren die meisten nationalen Krankenversicherungen.</p>
+    </div>
+    <div class="faq-card">
+      <h3>Wie sind Ihre Arbeitszeiten?</h3>
+      <p>Wir sind jederzeit für Sie da.</p>
+    </div>
+  </section>
+
+  <section class="video-section">
+    <h2>Einführungsvideo zur Plattform</h2>
+    <video controls>
+      <source src="intro.mp4" type="video/mp4" />
+      Ihr Browser unterstützt das Video-Tag nicht.
+    </video>
+  </section>
+
+  <a href="https://wa.me/201234567890" class="whatsapp-btn" target="_blank">📞 Chatten Sie mit uns</a>
+
+  <footer>
+    <p>© 2025 Alle Rechte vorbehalten bei AraMedix</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+  <script>
+    AOS.init();
+    window.addEventListener('DOMContentLoaded', () => {
+      const fullName = localStorage.getItem("fullName");
+      const loginLink = document.getElementById("loginLink");
+      const logoutLink = document.getElementById("logoutLink");
+      const dashboardLink = document.getElementById("dashboardLink");
+
+      if (fullName) {
+        document.querySelector(".hero h1").textContent = `Willkommen ${fullName} 👋`;
+        document.getElementById("startBtn").textContent = "Jetzt starten";
+        if (loginLink) loginLink.style.display = "none";
+        if (logoutLink) logoutLink.style.display = "inline-block";
+        if (dashboardLink) dashboardLink.style.display = "inline-block";
+      } else {
+        if (loginLink) loginLink.style.display = "inline-block";
+        if (logoutLink) logoutLink.style.display = "none";
+        if (dashboardLink) dashboardLink.style.display = "none";
+      }
+    });
+  </script>
+</body>
+</html>
+ -->
+
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AraMedix - Startseite</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="icon" href="./image/Logo3.jpeg">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: 'Cairo', sans-serif;
+      background: #ffffff;
+      color: #333;
+    }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 40px;
+      background-color: #0a4f70;
+      color: white;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+    .navbar .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 28px;
+      color: white;
+    }
+    .navbar .logo img {
+      height: 40px;
+      object-fit: contain;
+      display: block;
+    }
+    .navbar ul {
+      list-style: none;
+      display: flex;
+      gap: 25px;
+      margin: 0;
+      padding: 0;
+    }
+    .navbar li a {
+      color: white;
+      font-weight: 700;
+      padding: 6px 10px;
+      border-radius: 6px;
+      transition: 0.3s;
+    }
+    .navbar li a:hover {
+      background-color: rgba(255,255,255,0.2);
+    }
+    .hero {
+      text-align: center;
+      padding: 100px 20px;
+      background: linear-gradient(135deg, #0a4f70, #0fb9b1);
+      color: white;
+      border-radius: 0 0 50px 50px;
+    }
+    .hero h1 {
+      font-size: 3rem;
+      margin: 0;
+    }
+    .hero p {
+      font-size: 1.3rem;
+      margin-top: 10px;
+    }
+    .hero .cta {
+      margin-top: 30px;
+      display: inline-block;
+      background: white;
+      color: #0a4f70;
+      padding: 14px 40px;
+      border-radius: 30px;
+      font-weight: bold;
+      font-size: 1.2rem;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+    }
+    .hero .cta:hover {
+      background-color: #e0f7fa;
+    }
+    .section-title {
+      text-align: center;
+      color: #0a4f70;
+      font-size: 2rem;
+      margin-top: 40px;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+    .features, .services, .faq {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      padding: 40px 20px;
+    }
+    .feature-card, .service-card, .faq-card {
+      background: white;
+      padding: 25px;
+      width: 280px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .feature-card:hover, .service-card:hover, .faq-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+    }
+    .feature-card h3, .service-card h3, .faq-card h3 {
+      color: #0a4f70;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+    .video-section {
+      text-align: center;
+      padding: 50px 20px;
+    }
+    .video-section h2 {
+      color: #0a4f70;
+      margin-bottom: 20px;
+      font-size: 2rem;
+    }
+    .video-section img {
+      width: 100%;
+      max-width: 800px;
+      height: 450px;
+      border-radius: 20px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      object-fit: cover;
+      object-fit: contain;
+    }
+    .whatsapp-btn {
+      position: fixed;
+      bottom: 25px;
+      left: 25px;
+      background-color: #25D366;
+      color: white;
+      padding: 14px 26px;
+      border-radius: 40px;
+      font-weight: bold;
+      font-size: 16px;
+      box-shadow: 0 0 20px rgba(37, 211, 102, 0.9);
+      text-decoration: none;
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: #eee;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo">
+      <img src="./image/Logo1.jpeg" alt="AraMedix Logo" /> AraMedix
+    </div>
+    <ul id="navLinks">
+      <li><a href="login.html" id="loginLink">Anmelden</a></li>
+      <li><a href="doctor-dashboard.html" id="dashboardLink" style="display: none;">Arzt-Dashboard</a></li>
+      <li><a href="index.html" id="logoutLink" style="display: none;">← Abmelden</a></li>
+    </ul>
+  </nav>
+
+  <header class="hero">
+    <h1>Willkommen bei AraMedix</h1>
+    <p>Umfassende medizinische Versorgung über Ihr Mobiltelefon, Tablet oder Ihren Computer</p>
+    <a href="./doctor-dashboard.html" class="cta" id="startBtn">Jetzt starten</a>
+  </header>
+
+  <h2 class="section-title">Plattformfunktionen</h2>
+  <section class="features">
+    <div class="feature-card">
+      <h3>Top-Ärzte</h3>
+      <p>Wir bieten eine Auswahl an Top-Ärzten in verschiedenen Fachrichtungen.</p>
+    </div>
+    <div class="feature-card">
+      <h3>Abwesenheitsanträge</h3>
+      <p>Ärzte können ganz einfach Abwesenheit beantragen, und die Tage werden automatisch erfasst.</p>
+    </div>
+    <div class="feature-card">
+      <h3>Berechtigungsbasierte Bereiche</h3>
+      <p>Jeder Benutzer sieht nur das, was seinem Zugriffsniveau entspricht.</p>
+    </div>
+    <div class="feature-card">
+      <h3>Produktverwaltung</h3>
+      <p>Nur Administratoren können medizinische Produkte hinzufügen und verwalten.</p>
+    </div>
+  </section>
+
+  <h2 class="section-title">Unsere Dienstleistungen</h2>
+  <section class="services">
+    <div class="service-card">
+      <h3>Ärztliche Beratung</h3>
+      <p>Vereinbaren Sie Termine mit unserem zertifizierten medizinischen Personal.</p>
+    </div>
+    <div class="service-card">
+      <h3>Labortests</h3>
+      <p>Genaue und schnelle Testergebnisse, direkt mit Ihrem Profil verknüpft.</p>
+    </div>
+    <div class="service-card">
+      <h3>Online-Nachverfolgung</h3>
+      <p>Erhalten Sie Nachsorgekonsultationen aus der Ferne per Videoanruf.</p>
+    </div>
+  </section>
+
+  <h2 class="section-title">Häufige Fragen</h2>
+  <section class="faq">
+    <div class="faq-card">
+      <h3>Muss ich im Voraus buchen?</h3>
+      <p>Ja, die Online-Buchung sorgt für schnellen Service und eine bessere Vorbereitung.</p>
+    </div>
+    <div class="faq-card">
+      <h3>Welche Versicherungen akzeptieren Sie?</h3>
+      <p>Wir akzeptieren die meisten nationalen Krankenversicherungen.</p>
+    </div>
+    <div class="faq-card">
+      <h3>Wie sind Ihre Arbeitszeiten?</h3>
+      <p>Wir sind jederzeit für Sie da.</p>
+    </div>
+  </section>
+
+  <section class="video-section">
+    <h2>Einführung zur Plattform</h2>
+    <img src="./image/Logo3.jpeg" alt="Einführung zur Plattform" />
+  </section>
+
+  <a href="https://wa.me/201234567890" class="whatsapp-btn" target="_blank">📞 Chatten Sie mit uns</a>
+
+  <footer>
+    <p>© 2025 Alle Rechte vorbehalten bei AraMedix</p>
+  </footer>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const fullName = localStorage.getItem("fullName");
+      const loginLink = document.getElementById("loginLink");
+      const logoutLink = document.getElementById("logoutLink");
+      const dashboardLink = document.getElementById("dashboardLink");
+
+      if (fullName) {
+        document.querySelector(".hero h1").textContent = `Willkommen ${fullName} 👋`;
+        document.getElementById("startBtn").textContent = "Jetzt starten";
+        if (loginLink) loginLink.style.display = "none";
+        if (logoutLink) logoutLink.style.display = "inline-block";
+        if (dashboardLink) dashboardLink.style.display = "inline-block";
+      } else {
+        if (loginLink) loginLink.style.display = "inline-block";
+        if (logoutLink) logoutLink.style.display = "none";
+        if (dashboardLink) dashboardLink.style.display = "none";
+      }
+    });
+  </script>
+</body>
+</html>

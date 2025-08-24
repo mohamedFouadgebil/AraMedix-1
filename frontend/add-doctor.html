@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AraMedix - Einen Arzt hinzufügen</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="./image/Logo3.jpeg">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Cairo', sans-serif;
+      background-color: #f0f4f8;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .header {
+      background-color: #0a4f70;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+      font-size: 26px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .header img {
+      height: 40px;
+      width: 40px;
+      object-fit: cover;
+    }
+
+    .header h2 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    .back-button {
+      position: absolute;
+      right: 16px; 
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: #ffffff30;
+      color: white;
+      padding: 6px 14px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .back-button:hover {
+      background-color: #ffffff60;
+    }
+
+    .container {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 30px 20px;
+    }
+
+    .form-box {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      max-width: 500px;
+      width: 100%;
+    }
+
+    .form-box form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .form-box input,
+    .form-box textarea {
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      resize: none;
+    }
+
+    .form-box button {
+      background-color: #0a4f70;
+      color: white;
+      border: none;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .form-box button:hover {
+      background-color: #086084;
+    }
+
+    @media (max-width: 600px) {
+      .header h2 {
+        font-size: 18px;
+      }
+
+      .form-box {
+        padding: 20px 15px;
+      }
+
+      .form-box input,
+      .form-box textarea {
+        font-size: 14px;
+      }
+
+      .form-box button {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body class="add-doctor">
+
+  <script>
+    const role = localStorage.getItem("role");
+    const token = localStorage.getItem("token");
+
+    if (role !== "admin" || !token) {
+      alert("Sie sind nicht zum Betreten berechtigt.");
+      location.href = "index.html";
+    }
+  </script>
+
+  <div class="header">
+    <img src="./image/Logo1.jpeg" alt="Logo">
+    <h2>AraMedix - Neuen Arzt hinzufügen</h2>
+    <a class="back-button" href="admin-dashboard.html">← Zurück</a>
+  </div>
+
+  <div class="container">
+    <div class="form-box">
+      <form id="addDoctorForm">
+        <input type="text" id="name" placeholder="Vollständiger Name" required>
+        <input type="text" id="job" placeholder="Berufsbezeichnung" required>
+        <input type="file" id="image" accept="image/*" required>
+        <textarea id="bio" rows="4" placeholder="Biografie" required></textarea>
+        <button type="submit">Absenden</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("addDoctorForm").addEventListener("submit", async e => {
+      e.preventDefault();
+
+      const fd = new FormData();
+      fd.append("name", document.getElementById("name").value);
+      fd.append("job", document.getElementById("job").value);
+      fd.append("bio", document.getElementById("bio").value);
+      fd.append("image", document.getElementById("image").files[0]);
+
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        alert("Token fehlt. Bitte melden Sie sich erneut an.");
+        return;
+      }
+
+      try {
+        const res = await fetch("http://localhost:5000/api/doctors", {
+          method: "POST",
+          headers: {
+            Authorization: token
+          },
+          body: fd
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          alert("Der Arzt wurde erfolgreich hinzugefügt. ✅");
+          document.getElementById("addDoctorForm").reset();
+        } else {
+          alert(data.message || "Hinzufügen fehlgeschlagen. ❌");
+        }
+      } catch (err) {
+        console.error("❌ Fehler:", err);
+        alert("Network or server error.");
+      }
+    });
+  </script>
+</body>
+</html>

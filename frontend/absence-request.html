@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>AraMedix - Abwesenheit beantragen</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="./image/Logo3.jpeg">
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      direction: ltr;
+      background-color: #f0f4f8;
+      margin: 0;
+    }
+
+    .navbar {
+      background-color: #0a4f70;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+      font-size: 26px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .navbar img {
+      height: 40px;
+      width: 40px;
+      object-fit: cover;
+    }
+
+    .back-button {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: #ffffff30;
+      color: white;
+      padding: 6px 14px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 14px;
+      transition: background 0.3s;
+    }
+
+    .back-button:hover {
+      background-color: #ffffff60;
+    }
+
+    h2 {
+      text-align: center;
+      color: #0d3b66;
+      margin: 30px 0 10px;
+    }
+
+    form {
+      max-width: 500px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #ccc;
+    }
+
+    input, select, textarea, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 15px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+
+    .month-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      justify-items: center;
+      margin-top: 20px;
+    }
+
+    .month-button {
+      background-color: #2196f3;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 6px;
+      padding: 10px 0;
+      transition: 0.3s;
+      height: 30px;
+      width: 90px;
+      text-align: center;
+    }
+
+    .month-button:hover {
+      background-color: #1976d2;
+    }
+
+    .calendar {
+      margin-top: 30px;
+    }
+
+    .calendar-days {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .calendar-day {
+      background-color: #eee;
+      padding: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.2s;
+    }
+
+    .calendar-day:hover {
+      background-color: #ddd;
+    }
+
+    .selected {
+      background-color: #4caf50;
+      color: white;
+    }
+
+    button[type="submit"], button[type="button"] {
+      background-color: #0d3b66;
+      color: white;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button[type="submit"]:hover, button[type="button"]:hover {
+      background-color: #0a2b4d;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    #calendarTitle {
+      margin-top: 15px;
+      font-weight: bold;
+      font-size: 20px;
+      color: #333;
+    }
+
+    #myAbsenceList {
+      max-width: 600px;
+      margin: 40px auto;
+    }
+
+    .absence-box {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #ccc;
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body class="absence-request">
+
+  <script>
+    if (!["doctor", "nurse"].includes(localStorage.getItem("role"))) location.href = "index.html";
+  </script>
+
+  <div class="navbar">
+    <img src="./image/Logo1.jpeg" alt="Logo">
+    AraMedix - Abwesenheit
+    <a class="back-button" href="doctor-dashboard.html">← Zurück</a>
+  </div>
+
+  <h2>Abwesenheitsantrag absenden</h2>
+
+  <form id="absenceForm">
+    <input type="text" id="name" placeholder="Vollständiger Name" required style="width: 90%;">
+    <select id="roleSelect" required>
+      <option value="">Rolle wählen</option>
+      <option value="doctor">Arzt</option>
+      <option value="nurse">Krankenschwester</option>
+    </select>
+
+    <h3>Monat auswählen:</h3>
+    <div class="month-grid" id="monthsContainer"></div>
+
+    <div class="calendar hidden" id="calendarSection">
+      <h4 id="calendarTitle"></h4>
+      <div id="calendarDays" class="calendar-days"></div>
+      <button type="button" onclick="closeCalendar()">Schließen</button>
+    </div>
+
+    <textarea id="reason" placeholder="Abwesenheitsgrund (optional)" style="width: 90%;"></textarea>
+    <button type="submit">Anfrage senden</button>
+  </form>
+
+  <div id="myAbsenceList"></div>
+
+  <script>
+    const currentYear = new Date().getFullYear();
+    const selectedDates = new Set();
+
+    const monthNames = [
+      "Januar", "Februar", "März", "April", "Mai", "Juni",
+      "Juli", "August", "September", "Oktober", "November", "Dezember"
+    ];
+
+    const monthsContainer = document.getElementById("monthsContainer");
+    const calendarSection = document.getElementById("calendarSection");
+    const calendarTitle = document.getElementById("calendarTitle");
+    const calendarDays = document.getElementById("calendarDays");
+
+    monthNames.forEach((month, index) => {
+      const btn = document.createElement("div");
+      btn.textContent = month;
+      btn.className = "month-button";
+      btn.onclick = () => showMonth(index);
+      monthsContainer.appendChild(btn);
+    });
+
+    function showMonth(monthIndex) {
+      calendarTitle.textContent = monthNames[monthIndex] + " " + currentYear;
+      calendarDays.innerHTML = "";
+      const daysInMonth = new Date(currentYear, monthIndex + 1, 0).getDate();
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dateStr = `${currentYear}-${String(monthIndex + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const div = document.createElement("div");
+        div.textContent = day;
+        div.className = "calendar-day";
+        if (selectedDates.has(dateStr)) div.classList.add("selected");
+
+        div.onclick = () => {
+          if (selectedDates.has(dateStr)) {
+            selectedDates.delete(dateStr);
+            div.classList.remove("selected");
+          } else {
+            selectedDates.add(dateStr);
+            div.classList.add("selected");
+          }
+        };
+        calendarDays.appendChild(div);
+      }
+
+      calendarSection.classList.remove("hidden");
+    }
+
+    function closeCalendar() {
+      calendarSection.classList.add("hidden");
+    }
+
+    document.getElementById("absenceForm").addEventListener("submit", async e => {
+      e.preventDefault();
+      const name = document.getElementById("name").value;
+      const role = document.getElementById("roleSelect").value;
+      const reason = document.getElementById("reason").value;
+      const token = localStorage.getItem("token");
+      const dates = Array.from(selectedDates);
+
+      if ((role === "nurse" && dates.length > 28) || (role === "doctor" && dates.length > 30)) {
+        alert("Sie haben die zulässige Anzahl an Abwesenheitstagen überschritten");
+        return;
+      }
+
+      const res = await fetch("http://localhost:5000/api/absences", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": token },
+        body: JSON.stringify({ doctorName: name, role, dates, reason })
+      });
+
+      if (res.ok) {
+        alert("Abwesenheitsantrag erfolgreich gesendet");
+        selectedDates.clear();
+        document.getElementById("absenceForm").reset();
+        document.querySelectorAll(".calendar-day.selected").forEach(el => el.classList.remove("selected"));
+        loadMyAbsences();
+      } else {
+        alert("Senden der Anfrage fehlgeschlagen");
+      }
+    });
+
+    async function loadMyAbsences() {
+      const token = localStorage.getItem("token");
+
+      const res = await fetch("http://localhost:5000/api/absences/my", {
+        headers: { "Authorization": token }
+      });
+
+      const list = await res.json();
+      const container = document.getElementById("myAbsenceList");
+      if (!container) return;
+
+      container.innerHTML = "";
+
+      list.forEach(a => {
+        const box = document.createElement("div");
+        box.className = "absence-box";
+
+        const formattedDates = a.dates.map(date => new Date(date).toLocaleDateString()).join(", ");
+
+        box.innerHTML = `
+          <p><strong>Antrag vom Datum:</strong> ${formattedDates}</p>
+          <p>Status: <strong>${a.status}</strong></p>
+          ${a.notificationMessage ? `<p style="color:green;">${a.notificationMessage}</p>` : ""}
+        `;
+        container.appendChild(box);
+      });
+    }
+
+    loadMyAbsences();
+  </script>
+</body>
+</html>
